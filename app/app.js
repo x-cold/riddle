@@ -44,6 +44,14 @@ var _koaOnerror = require('koa-onerror');
 
 var _koaOnerror2 = _interopRequireDefault(_koaOnerror);
 
+var _koaSess = require('koa-sess');
+
+var _koaSess2 = _interopRequireDefault(_koaSess);
+
+var _koaGithub = require('koa-github');
+
+var _koaGithub2 = _interopRequireDefault(_koaGithub);
+
 var _config = require('./config');
 
 var _config2 = _interopRequireDefault(_config);
@@ -58,9 +66,41 @@ app.use((0, _koaConvert2.default)(bodyparser));
 app.use((0, _koaConvert2.default)((0, _koaJson2.default)()));
 app.use((0, _koaConvert2.default)((0, _koaLogger2.default)()));
 
+// session
+app.name = 'nae-web';
+app.keys = ['key1', 'key2'];
+
+app.use((0, _koaSess2.default)());
+app.use((0, _koaGithub2.default)({
+  clientID: '3341ac341999dbc5e4c6',
+  clientSecret: '7443d84b5310ddac1b3ae15262d3d692b311ae8f',
+  callbackURL: 'http://localhost:3000/start',
+  userKey: 'user',
+  timeout: 10000
+}));
+
 // static
 app.use((0, _koaConvert2.default)((0, _koaStaticPlus2.default)(_path2.default.join(__dirname, '../public'), {
   pathPrefix: ''
+})));
+
+app.use((0, _koaConvert2.default)( /*#__PURE__*/regeneratorRuntime.mark(function handler() {
+  return regeneratorRuntime.wrap(function handler$(_context) {
+    while (1) {
+      switch (_context.prev = _context.next) {
+        case 0:
+          if (!this.session.githubToken) {
+            this.body = '<a href="/github/auth">login with github</a>';
+          } else {
+            this.body = this.session.user;
+          }
+
+        case 1:
+        case 'end':
+          return _context.stop();
+      }
+    }
+  }, handler, this);
 })));
 
 // views

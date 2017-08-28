@@ -8,6 +8,8 @@ import Bodyparser from 'koa-bodyparser'
 import logger from 'koa-logger'
 import koaStatic from 'koa-static-plus'
 import koaOnError from 'koa-onerror'
+import session from 'koa-sess'
+import githubAuth from 'koa-github'
 import config from './config'
 
 const app = new Koa()
@@ -18,10 +20,31 @@ app.use(convert(bodyparser))
 app.use(convert(json()))
 app.use(convert(logger()))
 
+// session
+app.name = 'nae-web';
+app.keys = ['key1', 'key2'];
+
+app.use(session());
+app.use(githubAuth({
+  clientID: '3341ac341999dbc5e4c6',
+  clientSecret: '7443d84b5310ddac1b3ae15262d3d692b311ae8f',
+  callbackURL: 'http://localhost:3000/start',
+  userKey: 'user',
+  timeout: 10000
+}))
+
 // static
 app.use(convert(koaStatic(path.join(__dirname, '../public'), {
   pathPrefix: ''
 })))
+
+app.use(convert(function *handler() {
+  if (!this.session.githubToken) {
+    this.body = '<a href="/github/auth">login with github</a>';
+  } else {
+    this.body = this.session.user;
+  }
+}))
 
 // views
 app.use(views(path.join(__dirname, '../views'), {
