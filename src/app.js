@@ -8,9 +8,10 @@ import Bodyparser from 'koa-bodyparser'
 import logger from 'koa-logger'
 import koaStatic from 'koa-static-plus'
 import koaOnError from 'koa-onerror'
-import session from 'koa-sess'
+import session from 'koa-session'
 import githubAuth from 'koa-github'
 import config from './config'
+import packageSet from '../package'
 
 const app = new Koa()
 const bodyparser = Bodyparser()
@@ -21,10 +22,22 @@ app.use(convert(json()))
 app.use(convert(logger()))
 
 // session
-app.name = 'nae-web';
-app.keys = ['key1', 'key2'];
+app.name = packageSet.name;
+app.keys = ['some secret hurr'];
 
-app.use(session());
+const CONFIG = {
+  key: 'koa:sess', /** (string) cookie key (default is koa:sess) */
+  /** (number || 'session') maxAge in ms (default is 1 days) */
+  /** 'session' will result in a cookie that expires when session/browser is closed */
+  /** Warning: If a session cookie is stolen, this cookie will never expire */
+  maxAge: 86400000,
+  overwrite: true, /** (boolean) can overwrite or not (default true) */
+  httpOnly: true, /** (boolean) httpOnly or not (default true) */
+  signed: true, /** (boolean) signed or not (default true) */
+  rolling: false, /** (boolean) Force a session identifier cookie to be set on every response. The expiration is reset to the original maxAge, resetting the expiration countdown. default is false **/
+};
+
+app.use(session(CONFIG, app));
 app.use(githubAuth({
   clientID: '3341ac341999dbc5e4c6',
   clientSecret: '7443d84b5310ddac1b3ae15262d3d692b311ae8f',

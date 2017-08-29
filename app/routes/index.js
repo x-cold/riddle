@@ -10,12 +10,11 @@ var _koaRouter2 = _interopRequireDefault(_koaRouter);
 
 var _indexCtrl = require('../controllers/indexCtrl');
 
-var _indexCtrl2 = _interopRequireDefault(_indexCtrl);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var router = (0, _koaRouter2.default)();
 
-router.get('/', _indexCtrl2.default);
+router.get('/', _indexCtrl.index);
+router.get('/start', _indexCtrl.start);
 
 exports.default = router;

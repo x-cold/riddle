@@ -44,9 +44,9 @@ var _koaOnerror = require('koa-onerror');
 
 var _koaOnerror2 = _interopRequireDefault(_koaOnerror);
 
-var _koaSess = require('koa-sess');
+var _koaSession = require('koa-session');
 
-var _koaSess2 = _interopRequireDefault(_koaSess);
+var _koaSession2 = _interopRequireDefault(_koaSession);
 
 var _koaGithub = require('koa-github');
 
@@ -55,6 +55,10 @@ var _koaGithub2 = _interopRequireDefault(_koaGithub);
 var _config = require('./config');
 
 var _config2 = _interopRequireDefault(_config);
+
+var _package = require('../package');
+
+var _package2 = _interopRequireDefault(_package);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -67,10 +71,22 @@ app.use((0, _koaConvert2.default)((0, _koaJson2.default)()));
 app.use((0, _koaConvert2.default)((0, _koaLogger2.default)()));
 
 // session
-app.name = 'nae-web';
-app.keys = ['key1', 'key2'];
+app.name = _package2.default.name;
+app.keys = ['some secret hurr'];
 
-app.use((0, _koaSess2.default)());
+var CONFIG = {
+  key: 'koa:sess', /** (string) cookie key (default is koa:sess) */
+  /** (number || 'session') maxAge in ms (default is 1 days) */
+  /** 'session' will result in a cookie that expires when session/browser is closed */
+  /** Warning: If a session cookie is stolen, this cookie will never expire */
+  maxAge: 86400000,
+  overwrite: true, /** (boolean) can overwrite or not (default true) */
+  httpOnly: true, /** (boolean) httpOnly or not (default true) */
+  signed: true, /** (boolean) signed or not (default true) */
+  rolling: false /** (boolean) Force a session identifier cookie to be set on every response. The expiration is reset to the original maxAge, resetting the expiration countdown. default is false **/
+};
+
+app.use((0, _koaSession2.default)(CONFIG, app));
 app.use((0, _koaGithub2.default)({
   clientID: '3341ac341999dbc5e4c6',
   clientSecret: '7443d84b5310ddac1b3ae15262d3d692b311ae8f',
