@@ -48,9 +48,11 @@ var _koaSession = require('koa-session');
 
 var _koaSession2 = _interopRequireDefault(_koaSession);
 
-var _koaGithub = require('koa-github');
+var _koaPassport = require('koa-passport');
 
-var _koaGithub2 = _interopRequireDefault(_koaGithub);
+var _koaPassport2 = _interopRequireDefault(_koaPassport);
+
+var _passportGithub = require('passport-github');
 
 var _config = require('./config');
 
@@ -70,53 +72,25 @@ app.use((0, _koaConvert2.default)(bodyparser));
 app.use((0, _koaConvert2.default)((0, _koaJson2.default)()));
 app.use((0, _koaConvert2.default)((0, _koaLogger2.default)()));
 
-// session
-app.name = _package2.default.name;
-app.keys = ['some secret hurr'];
+app.keys = ['secret'];
+app.use((0, _koaSession2.default)({}, app));
 
-var CONFIG = {
-  key: 'koa:sess', /** (string) cookie key (default is koa:sess) */
-  /** (number || 'session') maxAge in ms (default is 1 days) */
-  /** 'session' will result in a cookie that expires when session/browser is closed */
-  /** Warning: If a session cookie is stolen, this cookie will never expire */
-  maxAge: 86400000,
-  overwrite: true, /** (boolean) can overwrite or not (default true) */
-  httpOnly: true, /** (boolean) httpOnly or not (default true) */
-  signed: true, /** (boolean) signed or not (default true) */
-  rolling: false /** (boolean) Force a session identifier cookie to be set on every response. The expiration is reset to the original maxAge, resetting the expiration countdown. default is false **/
-};
-
-app.use((0, _koaSession2.default)(CONFIG, app));
-app.use((0, _koaGithub2.default)({
-  clientID: '3341ac341999dbc5e4c6',
-  clientSecret: '7443d84b5310ddac1b3ae15262d3d692b311ae8f',
-  callbackURL: 'http://localhost:3000/start',
-  userKey: 'user',
-  timeout: 10000
+_koaPassport2.default.use(new _passportGithub.Strategy({
+  clientID: _config2.default.github.GITHUB_CLIENT_ID,
+  clientSecret: _config2.default.github.GITHUB_CLIENT_SECRET,
+  callbackURL: "http://localhost:3005/start"
+}, function (accessToken, refreshToken, profile, cb) {
+  // User.findOrCreate({ githubId: profile.id }, function (err, user) {
+  //   return cb(err, user);
+  // });
+  console.log(accessToken, refreshToken, profile, cb);
 }));
+app.use(_koaPassport2.default.initialize());
+app.use(_koaPassport2.default.session());
 
 // static
 app.use((0, _koaConvert2.default)((0, _koaStaticPlus2.default)(_path2.default.join(__dirname, '../public'), {
   pathPrefix: ''
-})));
-
-app.use((0, _koaConvert2.default)( /*#__PURE__*/regeneratorRuntime.mark(function handler() {
-  return regeneratorRuntime.wrap(function handler$(_context) {
-    while (1) {
-      switch (_context.prev = _context.next) {
-        case 0:
-          if (!this.session.githubToken) {
-            this.body = '<a href="/github/auth">login with github</a>';
-          } else {
-            this.body = this.session.user;
-          }
-
-        case 1:
-        case 'end':
-          return _context.stop();
-      }
-    }
-  }, handler, this);
 })));
 
 // views
@@ -180,3 +154,5 @@ server.on('listening', function () {
 });
 
 exports.default = app;
+
+//# sourceMappingURL=app.js.map

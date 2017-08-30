@@ -9,7 +9,10 @@ import logger from 'koa-logger'
 import koaStatic from 'koa-static-plus'
 import koaOnError from 'koa-onerror'
 import session from 'koa-session'
-import githubAuth from 'koa-github'
+import passport from 'koa-passport'
+import {
+  Strategy as GitHubStrategy
+} from 'passport-github'
 import config from './config'
 import packageSet from '../package'
 
@@ -21,43 +24,28 @@ app.use(convert(bodyparser))
 app.use(convert(json()))
 app.use(convert(logger()))
 
-// session
-app.name = packageSet.name;
-app.keys = ['some secret hurr'];
+app.keys = ['secret']
+app.use(session({}, app))
 
-const CONFIG = {
-  key: 'koa:sess', /** (string) cookie key (default is koa:sess) */
-  /** (number || 'session') maxAge in ms (default is 1 days) */
-  /** 'session' will result in a cookie that expires when session/browser is closed */
-  /** Warning: If a session cookie is stolen, this cookie will never expire */
-  maxAge: 86400000,
-  overwrite: true, /** (boolean) can overwrite or not (default true) */
-  httpOnly: true, /** (boolean) httpOnly or not (default true) */
-  signed: true, /** (boolean) signed or not (default true) */
-  rolling: false, /** (boolean) Force a session identifier cookie to be set on every response. The expiration is reset to the original maxAge, resetting the expiration countdown. default is false **/
-};
-
-app.use(session(CONFIG, app));
-app.use(githubAuth({
-  clientID: '3341ac341999dbc5e4c6',
-  clientSecret: '7443d84b5310ddac1b3ae15262d3d692b311ae8f',
-  callbackURL: 'http://localhost:3000/start',
-  userKey: 'user',
-  timeout: 10000
-}))
+passport.use(new GitHubStrategy({
+    clientID: config.github.GITHUB_CLIENT_ID,
+    clientSecret: config.github.GITHUB_CLIENT_SECRET,
+    callbackURL: "http://localhost:3005/start"
+  },
+  function(accessToken, refreshToken, profile, cb) {
+    // User.findOrCreate({ githubId: profile.id }, function (err, user) {
+    //   return cb(err, user);
+    // });
+    console.log(accessToken, refreshToken, profile, cb)
+  }
+))
+app.use(passport.initialize())
+app.use(passport.session())
 
 // static
 app.use(convert(koaStatic(path.join(__dirname, '../public'), {
   pathPrefix: ''
 })))
-
-app.use(convert(function *handler() {
-  if (!this.session.githubToken) {
-    this.body = '<a href="/github/auth">login with github</a>';
-  } else {
-    this.body = this.session.user;
-  }
-}))
 
 // views
 app.use(views(path.join(__dirname, '../views'), {

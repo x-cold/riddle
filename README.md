@@ -8,17 +8,6 @@
 
 [线上模式] 借助 pm2 使用 cluster 模式压榨多核 CPU 性能 
 
-## Getting Start
-
-```
-git clone https://github.com/17koa/koa2-startkit.git
-cd koa2-startkit
-npm install # 国内可以使用 cnpm 加速, 教育网可使用 rednpm (https://npm.mirror.cqupt.edu.cn) 加速
-npm start
-```
-
-然后使用浏览器打开 http://127.0.0.1:3000/ 即可
-
 ## Npm scripts
 
 ```bash
@@ -29,8 +18,6 @@ $ npm run compile # 编译
 $ npm run production # 生产模式
 ```
 
-
-
 ## 线上部署
 
 ```bash
@@ -39,8 +26,6 @@ vim pm2.json # 检查 pm2 的配置
 pm2 start pm2.json # 请确保已经 global 安装 pm2    (npm i pm2-cli -g)
 cp nginx.conf /etc/nginx/conf.d/YourProject.conf # 自行配置 nginx 反代
 ```
-
-
 
 ## 配置文件的 trick
 
@@ -51,8 +36,6 @@ import config from './config'
 ```
 
 默认配置文件位于 `src/config/default.js`, 建议只在这里创建配置字段, 在同目录下创建另一个 `custom.js`, 这个配置会覆盖(override) 默认配置, 且此文件不会被包含在 git 中, 避免密码泄露, 线上配置等问题.
-
-
 
 ## 断点调试
 
@@ -77,9 +60,6 @@ $ npm run debug
 9. ![4](https://dn-redrock.qbox.me/github/koa-4.png)
 10. 左侧的调试窗口已经可以正常使用了
 11. ![5](https://dn-redrock.qbox.me/github/koa-5.png)
-
-
-
 
 ## 目录结构说明
 
@@ -114,10 +94,3 @@ $ npm run debug
     ├── error.ejs
     └── index.ejs
 ```
-
-
-## Contact
-
-[issues](https://github.com/17koa/koa2-startkit/issues)
-
-[@Ling](https://github.com/wssgcg1213)    
