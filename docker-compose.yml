@@ -1,0 +1,36 @@
+# Docker 加速器
+# https://cr.console.aliyun.com/#/docker/booster
+
+# Nginx Proxy
+nginx:
+  build: ./docker/nginx
+  links:
+    - app:app
+  ports:
+    - "80:80"
+
+# Egg App
+app:
+  build: ./server
+  links:
+    - mongo:mongo
+    - redis:redis
+  ports:
+    - "7001:7001"
+  environment:
+    NODE_ENV: production
+    MONGODB_URI: mongodb://mongo/service
+    IP: 0.0.0.0
+    PORT: 7001
+
+# MongoDB
+mongo:
+  build: ./docker/mongo
+  ports:
+    - "27017:27017"
+
+# Redis
+redis:
+  image: redis
+  ports: 
+    - "6379:6379"
