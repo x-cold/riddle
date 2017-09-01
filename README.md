@@ -1,5 +1,9 @@
+# Riddle Game
+
+## Startup
+
 ```sh
 docker-compose up -d --build
 ```
 
-See `Dockerfile` and `docker-compose.yml` for more details.
+See `docker-compose.yml` for more details.
