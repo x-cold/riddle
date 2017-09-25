@@ -9,7 +9,10 @@
     "egg-mongoose": "^2.1.0",
     "egg-passport": "^1.0.0",
     "egg-passport-github": "^1.0.0",
+    "egg-redis": "^1.0.2",
     "egg-scripts": "^1.1.1",
+    "egg-session-redis": "^1.0.0",
+    "egg-view-nunjucks": "^2.1.4",
     "moment": "^2.18.1"
   },
   "devDependencies": {
