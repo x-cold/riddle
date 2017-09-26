@@ -37,5 +37,9 @@ module.exports = appInfo => {
     root: path.join(__dirname, '../app/view')
   };
 
+  config.middleware = [
+    'auth'
+  ];
+
   return config;
 };
