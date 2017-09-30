@@ -5,8 +5,7 @@ const BaseModel = require('../utils/base_model');
 module.exports = app => {
   const mongoose = app.mongoose;
   const UserSchema = new mongoose.Schema({
-    name: { type: String }, // 用户名
-    loginname: { type: String }, // 登录名
+    userName: { type: String }, // 用户名
     pass: { type: String }, // 密码
     avatar: { type: String }, // 个人头像
     email: { type: String }, // 邮箱地址
@@ -14,7 +13,7 @@ module.exports = app => {
     update_at: { type: Date, default: Date.now }, // 修改时间
     score: { type: Number, default: 0 }, // 积分
     level: { type: String }, // 关卡
-    active: { type: Boolean, default: false }, // 是否可用
+    active: { type: Boolean, default: true }, // 是否可用
     isBlock: { type: Boolean, default: false }, // 是否黑名单用户
     githubId: { type: String },
     githubUsername: { type: String },
